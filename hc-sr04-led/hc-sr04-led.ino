@@ -2,12 +2,14 @@
  * A small test program which utilising a an HC-SR04 ultra-sonic sensor board
  * and the built-in led on the ubirch board.
  * 
- * 
  * DIGIAL groove to HC-SR04 wiring: 
  *   pin 1 (uno PIN 9) - TRIG
  *   pin 2 (uno PIN 10) - ECHO
  *   pin 3 (+5V) - Vcc
  *   pin 4 (Gnd) - Gnd
+ *
+ * Ideas take from 
+ * http://www.instructables.com/id/Simple-Arduino-and-HC-SR04-Example
  *   
  * == LICENSE ==
  * Copyright 2015 ubirch GmbH
