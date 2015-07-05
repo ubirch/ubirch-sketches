@@ -8,7 +8,7 @@
  *   pin 3 (+5V) - Vcc
  *   pin 4 (Gnd) - Gnd
  *
- * Ideas take from 
+ * Ideas taken from 
  * http://www.instructables.com/id/Simple-Arduino-and-HC-SR04-Example
  *   
  * == LICENSE ==
