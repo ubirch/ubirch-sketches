@@ -1,4 +1,4 @@
-/* 
+/** 
  * This sketch combines the ultra-sonic sensor code with what I learned
  * from working with interrupts. The measurement is done concurrently
  * in an interrupt handler and the main loop just takes the measnured
@@ -95,7 +95,7 @@ ISR(TIMER1_COMPA_vect) {
       sensorState = TRIG_SEND;
       break;
       
-    case TRIG_SEND:
+    case TRIG_SEND:    
       digitalWrite(TRIG, HIGH);
       sensorState = TRIG_STOP;
       break;
