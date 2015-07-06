@@ -67,7 +67,8 @@
 
 // the prescale counter contains the calls we need to skip to get close to our target interval
 // change this to SECOND_LOOPS_xx if needed
-int prescaleCounter = SECOND_LOOPS_NONE;
+volatile int prescaleCounter = SECOND_LOOPS_NONE;
+volatile int toggleState = HIGH;
 
 void setup(){
   Serial.begin(115200);
@@ -92,8 +93,6 @@ void setup(){
 
   sei(); 
 }
-
-int toggleState = HIGH;
 
 /**
  * The interrupt routine executed after a timer interrupt occured.
