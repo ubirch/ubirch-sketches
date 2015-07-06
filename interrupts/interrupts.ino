@@ -67,7 +67,7 @@
 
 // the prescale counter contains the calls we need to skip to get close to our target interval
 // change this to SECOND_LOOPS_xx if needed
-int prescaleCounter = 0;
+int prescaleCounter = SECOND_LOOPS_NONE;
 
 void setup(){
   Serial.begin(115200);
@@ -86,7 +86,7 @@ void setup(){
 
   // (Hz/Prescaler)*seconds-1
   OCR1A = PRESCALE_NONE - 1; // run every second
-  TCCR1B |= _BV(CS00); // must match prescale value 
+  TCCR1B |= _BV(CS10); // must match prescale value 
   TCCR1B |= _BV(WGM12); // CTC Mode
   TIMSK1 |= (1 << OCIE1A); // Timer compare interrupt
 
@@ -105,7 +105,7 @@ ISR(TIMER1_COMPA_vect) {
   
   Serial.println("timer1: interrupt()");
   toggleState = toggleState == HIGH ? LOW : HIGH;
-  digitalWrite(LED,toggleState);
+  digitalWrite(LED, toggleState);
 }
 
 /**
