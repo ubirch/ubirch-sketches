@@ -1,9 +1,42 @@
 /* 
  *  An interrupt example program.
  *  
- *  It sets up an interrupt at 1Hz which can be slowed down by using the interrupt divider.
+ *  It sets up an interrupt at X kHz which is used to call the interrupt routing. The interrupt
+ *  routing then executes a piece of code while everything else is on hold.
  *  
- *  more info: https://sites.google.com/site/qeewiki/books/avr-guide/timers-on-the-atmega328
+ *  The max value for the overflow counter (OCR1A) must be less than or equal to 0xFFFF (65535)
+ *  The PRESCAL_XX defines account for exactly 1s at the selected prescale (the number by which
+ *  the 16MHz signal is divided into).
+ *  
+ *  Thus if we want to interrupt less than 1s we should use one NONE - 64 or if we want to set 
+ *  the interval at longer than 1s use 256 or 1024. However, in case we want to run a routine
+ *  only every 5s or longer we need to keep our own counter.
+ *  
+ *  // PRESCALE values > 0xFFFF
+ *  NONE => 1s == ~244 calls
+ *  8    => 1s ==  ~30 calls
+ *  64   => 1s ==   ~3 calls
+ *  
+ *  // PRESCALE values < 0xFFFF
+ *  256  => 1s ==    1 call (no multiplier possible)
+ *  1024 => 1s ==    1 call (up to multiplier 4)
+ *  
+ *  These numbers help you to calculate your actual interval (most useful if it is below 1s):
+ *  Either adjust the number of times the method is called, or in a more practical way, adjust 
+ *  the counter value (which is 0xFFFF for NONE - 64) to a lower value that matches your targeted
+ *  time interval:
+ *  
+ *  LOOPS = (FREQUENCY / INTERVAL) / 0xFFFF
+ *  
+ *  FREQUENCY is 0xF42400 (NONE, 16MHz), 0x1E8480 (8), 0x3D090 (64)
+ *  INTERVAL is in seconds and may be 1000 * 125 for 125ms
+ *  
+ *  For a 1µs interval we need no extra loops and can set the OCR1A to 0x10 directly. Just multiply
+ *  that number for microsecond intervals.
+ * 
+ *  more info: 
+ *  https://sites.google.com/site/qeewiki/books/avr-guide/timers-on-the-atmega328
+ *  http://playground.arduino.cc/Main/TimerPWMCheatsheet
  *  
  * == LICENSE ==
  * Copyright 2015 ubirch GmbH
@@ -21,10 +54,17 @@
  * limitations under the License.
   */
 #define LED 13
-#define FREQ_DIVIDER 32
 
-int toggleCounter = FREQ_DIVIDER;
-int toggleState = HIGH;
+#define SECOND_LOOPS_NONE 0xF4
+#define SECOND_LOOPS_8 0x1E
+#define SECOND_LOOPS_64 0x03
+
+#define PRESCALE_NONE 0xFFFF // 0xF42400
+#define PRESCALE_8    0xFFFF // 0x1E8480
+#define PRESCALE_64   0xFFFF // 0x3D090
+#define PRESCALE_256  0xF424
+#define PRESCALE_1024 0x3D09
+
 
 void setup(){
   Serial.begin(115200);
@@ -32,39 +72,44 @@ void setup(){
 
   cli();
 
-  // clear interrupt register
-  TCCR0A = 0;
-  TCCR0B = 0;
-  TCNT0 = 0;
-  
-  // timer mode = CTC
-  TCCR0A |= (1 << WGM01);
-  // set the ISR COMPA vect
-  TIMSK0 |= (1 << OCIE0A);   
-  // OCRn =  [ (clock_speed / Prescaler_value) * Desired_time_in_Seconds ] - 1
-  OCR0A = (16*10^6) / 1024 - 1;
-  // prescaler = 1024 (CS10+12)  
-  TCCR0B |= (1 << CS10) | (1 << CS12);
-  
-  sei();
+  // we should not use timer0 as it affects delay() etc. (if using arduino code)
 
+  // reset the timer registers
+  TCCR1A = 0;
+  TCCR1B = 0;
+  TCNT1  = 0;
+  
+  // (Hz/Prescaler)*seconds-1
+  OCR1A = PRESCALE_NONE - 1; // run every second
+  TCCR1B |= _BV(CS00); // must match prescale value 
+  TCCR1B |= _BV(WGM12); // CTC Mode
+  TIMSK1 |= (1 << OCIE1A); // Timer compare interrupt
+
+  sei(); 
 }
 
-ISR(TIMER0_COMPA_vect){
-  toggleCounter -= 1;
-  if (toggleCounter < 0) {
-    toggleCounter = FREQ_DIVIDER;
-    interrupt();
-  } 
-}
+// the prescale counter contains the calls we need to skip to get close to our target interval
+int prescaleCounter = SECOND_LOOPS_NONE;
+int toggleState = HIGH;
 
-void interrupt() {
+/**
+ * The interrupt routine executed after a timer interrupt occured.
+ * Keep in mind that everything is stopped while this routing runs.
+ */
+ISR(TIMER1_COMPA_vect) {
+  if(--prescaleCounter > 0) return;
+  prescaleCounter = SECOND_LOOPS_NONE;
+  
+  Serial.println("timer1: interrupt()");
   toggleState = toggleState == HIGH ? LOW : HIGH;
   digitalWrite(LED,toggleState);
 }
 
+/**
+ * Our normal main loop. It is stopped whenever the interrupt occurs.
+ */
 void loop(){
-  Serial.print("toggle counter: ");
-  Serial.println(toggleCounter);
-  delay(100);
+  // we can do something here ...
+  Serial.println("looping away ...");
+  delay(1000);
 }
