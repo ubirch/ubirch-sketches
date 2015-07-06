@@ -103,12 +103,12 @@ ISR(TIMER1_COMPA_vect) {
     case TRIG_STOP:      
       digitalWrite(TRIG, LOW);
       sensorState = ECHO_START;
-      timingStart = micros();
       timingLoops = 0;
       break;
 
     case ECHO_START:               
       if(digitalRead(ECHO) == HIGH) {
+        timingStart = micros();
         sensorState = ECHO_READ;
       }
       if(++timingLoops > MAX_TIMING_LOOPS) {
