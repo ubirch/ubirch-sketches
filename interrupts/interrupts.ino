@@ -65,9 +65,14 @@
 #define PRESCALE_256  0xF424
 #define PRESCALE_1024 0x3D09
 
+// the prescale counter contains the calls we need to skip to get close to our target interval
+// change this to SECOND_LOOPS_xx if needed
+int prescaleCounter = 0;
 
 void setup(){
   Serial.begin(115200);
+  Serial.println("== INIT");
+
   pinMode(LED, OUTPUT);
 
   cli();
@@ -78,7 +83,7 @@ void setup(){
   TCCR1A = 0;
   TCCR1B = 0;
   TCNT1  = 0;
-  
+
   // (Hz/Prescaler)*seconds-1
   OCR1A = PRESCALE_NONE - 1; // run every second
   TCCR1B |= _BV(CS00); // must match prescale value 
@@ -88,13 +93,11 @@ void setup(){
   sei(); 
 }
 
-// the prescale counter contains the calls we need to skip to get close to our target interval
-int prescaleCounter = SECOND_LOOPS_NONE;
 int toggleState = HIGH;
 
 /**
  * The interrupt routine executed after a timer interrupt occured.
- * Keep in mind that everything is stopped while this routing runs.
+ * Keep in mind that everything is stopped while this routine runs.
  */
 ISR(TIMER1_COMPA_vect) {
   if(--prescaleCounter > 0) return;
