@@ -89,7 +89,7 @@ void setup(){
   OCR1A = PRESCALE_NONE - 1; // run every second
   TCCR1B |= _BV(CS10); // must match prescale value 
   TCCR1B |= _BV(WGM12); // CTC Mode
-  TIMSK1 |= (1 << OCIE1A); // Timer compare interrupt
+  TIMSK1 |= _BV(OCIE1A); // Timer compare interrupt
 
   sei(); 
 }

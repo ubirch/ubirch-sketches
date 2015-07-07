@@ -31,15 +31,21 @@
 
 #include<SoftwareSerial.h>
 
+#define WATCHDOG 6
 #define SIM800H_RX 2
 #define SIM800H_TX 3
 
 SoftwareSerial sim800h = SoftwareSerial(SIM800H_TX, SIM800H_RX);
 
 void setup() {
+  // disable the external watchdog
+  pinMode(WATCHDOG, OUTPUT);
+  //digitalWrite(WATCHDOG, LOW);
+
+  // setup baud rates for serial and modem
   Serial.begin(115200);
   sim800h.begin(9600);
-
+  
   cli();
 
   // reset the timer registers
@@ -50,9 +56,13 @@ void setup() {
   OCR1A = 16000000UL / 8 / 2 - 1;
   TCCR1B |= _BV(CS11); // prescale 8 selected
   TCCR1B |= _BV(WGM12); // CTC mode
-  TIMSK1 |= (1 << OCIE1A); // timer compare interrupt
+  TIMSK1 |= _BV(OCIE1A); // timer compare interrupt
 
   sei();
+
+  // query generic information and registration status
+  Serial.println();
+  sim800h.println("ATI;+CREG?");
 }
 
 // read what is available from the serial port and send to modem

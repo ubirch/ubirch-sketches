@@ -58,7 +58,7 @@ void setup(){
   OCR1A = 16000000UL / 8 / 1000 / 4 - 1;
   TCCR1B |= _BV(CS11); // prescale 8 selected
   TCCR1B |= _BV(WGM12); // CTC mode
-  TIMSK1 |= (1 << OCIE1A); // timer compare interrupt
+  TIMSK1 |= _BV(OCIE1A); // timer compare interrupt
 
   sei();
 }
