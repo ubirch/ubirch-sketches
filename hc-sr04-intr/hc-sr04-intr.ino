@@ -55,7 +55,7 @@ void setup(){
   TCNT1  = 0;
 
   // 16MHz/8*0.004 - something not 16MHz but fast enough to be able to measure
-  OCR1A = 0x1f4 - 1;
+  OCR1A = 16000000UL / 8 / 1000 / 4 - 1;
   TCCR1B |= _BV(CS11); // prescale 8 selected
   TCCR1B |= _BV(WGM12); // CTC mode
   TIMSK1 |= (1 << OCIE1A); // timer compare interrupt
