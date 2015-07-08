@@ -26,7 +26,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
+
 #define TRIG 9
 #define ECHO 10
 #define LED 13
@@ -40,6 +40,17 @@ void setup() {
   pinMode(LED, OUTPUT);
   pinMode(TRIG, OUTPUT);
   pinMode(ECHO, INPUT);
+}
+
+/*
+ * Small blink function that uses the distance for frequency.
+ */
+void blink(int distance) {
+  for(int i = 0; i < 5; i++) {
+    digitalWrite(LED, HIGH);   // turn the LED on (HIGH is the voltage level)
+    delay(min((long)distance, 200));              // wait for a second
+    digitalWrite(LED, LOW);    // turn the LED off by making the voltage LOW
+  }
 }
 
 // the loop function runs over and over again forever
@@ -72,16 +83,4 @@ void loop() {
   }
   delay(500);
 }
-
-/*
- * Small blink function that uses the distance for frequency.
- */
-void blink(int distance) {
-  for(int i = 0; i < 5; i++) {
-    digitalWrite(LED, HIGH);   // turn the LED on (HIGH is the voltage level)
-    delay(min((long)distance, 200));              // wait for a second
-    digitalWrite(LED, LOW);    // turn the LED off by making the voltage LOW
-  }
-}
-
 
