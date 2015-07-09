@@ -43,7 +43,7 @@ void setup() {
 
   // setup baud rates for serial and modem
   Serial.begin(115200);
-  sim800h.begin(9600);
+  sim800h.begin(19200);
   
   cli();
 
@@ -60,8 +60,9 @@ void setup() {
   sei();
 
   // query generic information and registration status
+  delay(3000);
   Serial.println();
-  sim800h.println("ATI;+CREG?");
+  sim800h.println(F("ATI;+CREG?;+CMGF=1;+CMGL=\"ALL\""));
 }
 
 // read what is available from the serial port and send to modem
