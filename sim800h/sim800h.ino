@@ -62,6 +62,10 @@ void setup() {
   // query generic information and registration status
   delay(3000);
   Serial.println();
+  // ATI - display information
+  // AT+CREG? - display information on network registration
+  // AT+CMGF=1 - SMS text mode
+  // AT+CMGL="ALL" - list all available SMS
   sim800h.println(F("ATI;+CREG?;+CMGF=1;+CMGL=\"ALL\""));
 }
 
