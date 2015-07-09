@@ -4,7 +4,7 @@ Sketches for the ubirch #1 board.
 
 This is the board. In comparison to an original Arduino Uno with the FONA shield.
 
-![](docs/ubirch%231.png)
+![ubirch #1](docs/ubirch%231.jpg?raw=true)
 
 It is a playground for working with the board and peripherals as well as a testing
 area to identify what is possible with the board.
