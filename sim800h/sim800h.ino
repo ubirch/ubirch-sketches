@@ -40,7 +40,6 @@ SoftwareSerial sim800h = SoftwareSerial(SIM800H_TX, SIM800H_RX);
 void setup() {
   // disable the external watchdog
   pinMode(WATCHDOG, OUTPUT);
-  //digitalWrite(WATCHDOG, LOW);
 
   // setup baud rates for serial and modem
   Serial.begin(115200);
