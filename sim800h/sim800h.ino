@@ -43,7 +43,7 @@ void setup() {
 
   // setup baud rates for serial and modem
   Serial.begin(115200);
-  sim800h.begin(19200);
+  sim800h.begin(38400);
   
   cli();
 
