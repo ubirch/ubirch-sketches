@@ -1,7 +1,11 @@
-SKETCHES = interrupts hc-sr04-intr hc-sr04-led interrupts sim800h
+SKETCHES = interrupts hc-sr04-intr hc-sr04-led sim800h sim800h-tcp
 
-all:
-	for d in $(SKETCHES); do $(MAKE) -C $$d; done
+.PHONY: subdirs $(SKETCHES)
+
+all: $(SKETCHES)
+
+$(SKETCHES):
+	$(MAKE) -C $@
 
 clean:
-	-$(RM) -rf */build-uno
+	-$(RM) -r */build-uno
