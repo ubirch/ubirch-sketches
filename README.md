@@ -22,6 +22,6 @@ however you can also build all sketches using ```make``` or an individual sketch
  
 ## ubirch #1
 
-This is the board. In comparison to an original Arduino Uno with the FONA shield.
+This is the board. In comparison to a test board with (similar to Arduino Uno) with the FONA shield.
 
 ![ubirch #1](docs/ubirch%231.jpg?raw=true)
