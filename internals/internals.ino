@@ -46,6 +46,8 @@ void setup(){
   delay(3000);
 }
 
+volatile float a=0.5;
+
 // do some work :-)
 ISR(TIMER1_COMPA_vect) {
   a = cos(a);
@@ -64,9 +66,6 @@ long readTemp() {
   result = (result - 125) * 1075;
   return result;
 }
-
-volatile float a=0.5;
-
 
 // https://code.google.com/p/tinkerit/wiki/SecretVoltmeter
 long readVcc() {
